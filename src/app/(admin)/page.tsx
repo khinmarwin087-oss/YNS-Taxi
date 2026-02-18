@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect } from 'react';
-import { db, rtdb } from '@/lib/firebase';
+import { rtdb } from '@/lib/firebase';
 import { ref, onValue } from 'firebase/database';
 import { Users, Car, Map as MapIcon, TrendingUp, Clock } from 'lucide-react';
 
@@ -19,7 +19,7 @@ export default function AdminDashboard() {
         const allRides = Object.values(data);
         setStats({
           totalRides: allRides.length,
-          activeDrivers: 12, // လောလောဆယ် Sample အနေနဲ့ ထည့်ထားတာပါ
+          activeDrivers: 12, // Sample data
           pendingRides: allRides.filter((r: any) => r.status === 'pending').length
         });
       }
@@ -27,49 +27,57 @@ export default function AdminDashboard() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
-      <div className="mb-8">
-        <h1 className="text-3xl font-black text-gray-900">Admin Panel</h1>
-        <p className="text-gray-500">YNS Taxi တစ်ခုလုံး၏ အခြေအနေကို စောင့်ကြည့်ရန်</p>
+    <div className="min-h-screen bg-gray-50 p-4">
+      <div className="mb-6">
+        <h1 className="text-2xl font-black text-gray-900">Admin Panel</h1>
+        <p className="text-xs text-gray-500">YNS Taxi အခြေအနေ စောင့်ကြည့်ရန်</p>
       </div>
 
-      {/* Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
-        <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100">
-          <div className="w-12 h-12 bg-blue-50 rounded-2xl flex items-center justify-center mb-4">
-            <TrendingUp className="text-blue-600 w-6 h-6" />
+      {/* Stats Grid - တစ်တန်း နှစ်ကွက်တွဲ ပုံစံ */}
+      <div className="grid grid-cols-2 gap-3 mb-6">
+        {/* Total Rides */}
+        <div className="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 flex flex-col items-center text-center">
+          <div className="w-10 h-10 bg-blue-50 rounded-xl flex items-center justify-center mb-2">
+            <TrendingUp className="text-blue-600 w-5 h-5" />
           </div>
-          <p className="text-gray-500 text-sm font-bold">Total Rides</p>
-          <h2 className="text-3xl font-black">{stats.totalRides}</h2>
+          <p className="text-gray-500 text-[10px] font-bold uppercase tracking-wider">Total Rides</p>
+          <h2 className="text-xl font-black text-gray-900">{stats.totalRides}</h2>
         </div>
 
-        <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100">
-          <div className="w-12 h-12 bg-green-50 rounded-2xl flex items-center justify-center mb-4">
-            <Car className="text-green-600 w-6 h-6" />
+        {/* Active Drivers */}
+        <div className="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 flex flex-col items-center text-center">
+          <div className="w-10 h-10 bg-green-50 rounded-xl flex items-center justify-center mb-2">
+            <Car className="text-green-600 w-5 h-5" />
           </div>
-          <p className="text-gray-500 text-sm font-bold">Active Drivers</p>
-          <h2 className="text-3xl font-black">{stats.activeDrivers}</h2>
+          <p className="text-gray-500 text-[10px] font-bold uppercase tracking-wider">Active Drivers</p>
+          <h2 className="text-xl font-black text-gray-900">{stats.activeDrivers}</h2>
         </div>
 
-        <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100">
-          <div className="w-12 h-12 bg-orange-50 rounded-2xl flex items-center justify-center mb-4">
-            <Clock className="text-orange-600 w-6 h-6" />
+        {/* Pending Requests - ဒီကောင်က အောက်တစ်တန်းမှာ တစ်ခုတည်း grid-span လုပ်လို့ရတယ် */}
+        <div className="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 flex flex-col items-center text-center col-span-2">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-orange-50 rounded-xl flex items-center justify-center">
+              <Clock className="text-orange-600 w-5 h-5" />
+            </div>
+            <div className="text-left">
+              <p className="text-gray-500 text-[10px] font-bold uppercase tracking-wider">Pending Requests</p>
+              <h2 className="text-xl font-black text-gray-900">{stats.pendingRides}</h2>
+            </div>
           </div>
-          <p className="text-gray-500 text-sm font-bold">Pending Requests</p>
-          <h2 className="text-3xl font-black">{stats.pendingRides}</h2>
         </div>
       </div>
 
-      {/* အနာဂတ်တွင် မြေပုံ သို့မဟုတ် အော်ဒါဇယားများ ထပ်ထည့်ရန် နေရာ */}
-      <div className="bg-black text-white p-10 rounded-[40px] flex items-center justify-between overflow-hidden relative">
-        <div className="z-10">
-          <h2 className="text-2xl font-bold mb-2">Live Tracking Map</h2>
-          <p className="text-gray-400 max-w-xs">ယာဉ်မောင်းအားလုံး၏ တည်နေရာကို မြေပုံပေါ်တွင် တိုက်ရိုက်ကြည့်ရှုပါ။</p>
-          <button className="mt-6 bg-white text-black px-6 py-3 rounded-2xl font-bold text-sm">Open Map</button>
+      {/* Map Section - ပိုသေးပြီး သေသပ်သော ဒီဇိုင်း */}
+      <div className="bg-black text-white p-6 rounded-[30px] relative overflow-hidden">
+        <div className="relative z-10">
+          <h2 className="text-lg font-bold mb-1">Live Tracking</h2>
+          <p className="text-gray-400 text-xs max-w-[150px]">ယာဉ်မောင်းအားလုံးကို မြေပုံပေါ်တွင် ကြည့်မည်</p>
+          <button className="mt-4 bg-white text-black px-5 py-2 rounded-xl font-black text-xs hover:bg-gray-200 transition-colors">
+            Open Map
+          </button>
         </div>
-        <MapIcon className="w-40 h-40 absolute -right-10 text-gray-800 opacity-50 rotate-12" />
+        <MapIcon className="w-24 h-24 absolute -right-4 -bottom-4 text-white opacity-10 rotate-12" />
       </div>
     </div>
   );
 }
-
