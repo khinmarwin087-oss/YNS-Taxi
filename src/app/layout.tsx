@@ -1,19 +1,26 @@
-import { RideProvider } from '@/context/RideContext';
-import './globals.css'; // CSS ဖိုင်ရှိဖို့လိုပါမယ်
+import "./globals.css";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "YNS Taxi",
+  description: "Taxi Booking App",
+};
 
 export default function RootLayout({
   children,
 }: {
-  children: React.ReactNode
+  children: React.ReactNode;
 }) {
   return (
-    <html lang="my">
-      <body>
-        <RideProvider>
-          {children}
-        </RideProvider>
-      </body>
+    <html lang="en">
+      <head>
+        {/* Leaflet မြေပုံအတွက် CSS ပါ တစ်ခါတည်း ထည့်ထားပေးပါတယ် */}
+        <link
+          rel="stylesheet"
+          href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        />
+      </head>
+      <body>{children}</body>
     </html>
   );
 }
-
